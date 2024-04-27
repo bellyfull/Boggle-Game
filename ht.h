@@ -278,6 +278,7 @@ private:
     static const HASH_INDEX_T CAPACITIES[];
     HASH_INDEX_T mIndex_;  // index to CAPACITIES
     double resizeAlpha;
+    size_t numElements;
 
     // ADD MORE DATA MEMBERS HERE, AS NECESSARY
 
@@ -300,7 +301,7 @@ const HASH_INDEX_T HashTable<K,V,Prober,Hash,KEqual>::CAPACITIES[] =
 template<typename K, typename V, typename Prober, typename Hash, typename KEqual>
 HashTable<K,V,Prober,Hash,KEqual>::HashTable(
     double resizeAlpha, const Prober& prober, const Hasher& hash, const KEqual& kequal)
-       :  resizeAlpha(resizeAlpha), hash_(hash), kequal_(kequal), prober_(prober)
+       :  resizeAlpha(resizeAlpha), hash_(hash), kequal_(kequal), prober_(prober), numElements(0)
 { // init hashtable
     // Initialize any other data members as necessary
     mIndex_ = 0; // idx of table size (CAPACITIES) vector
@@ -347,13 +348,14 @@ bool HashTable<K,V,Prober,Hash,KEqual>::empty() const
 template<typename K, typename V, typename Prober, typename Hash, typename KEqual>
 size_t HashTable<K,V,Prober,Hash,KEqual>::size() const
 { // return # of items STORED
-  size_t count = 0;
-  for (auto it = table_.begin(); it != table_.end(); it++) {
-    if (*it != NULL && !(*it)->deleted) {
-      count +=1;
-    }
-  }
-  return count;
+  // size_t count = 0;
+  // for (auto it = table_.begin(); it != table_.end(); it++) {
+  //   if (*it != NULL && !(*it)->deleted) {
+  //     count +=1;
+  //   }
+  // }
+  // return count;
+  return numElements;
 
 }
 
@@ -402,6 +404,7 @@ void HashTable<K,V,Prober,Hash,KEqual>::insert(const ItemType& p)
         }
       } else {
         table_[idx] = new HashItem(p); // if null, allocate new item
+        numElements +=1;
         return;
       }
 
@@ -436,6 +439,7 @@ void HashTable<K,V,Prober,Hash,KEqual>::remove(const KeyType& key)
     // check if spot is full, never been deleted, and is the item we are searching
     if (table_[idx] != NULL && table_[idx]->deleted == false && kequal_(table_[idx]->item.first,key)) {
         table_[idx]->deleted = true;
+        numElements -=1;
         return;
     }
     idx = prober_.next(); // if doesn't remove in this try, probe again 

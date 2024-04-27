@@ -96,4 +96,57 @@ bool boggleHelper(const std::set<std::string>& dict, const std::set<std::string>
 {
 //add your solution here!
 
+  // if (dict.find("PST") != dict.end()) {
+  //   std::cout <<"pst is found" << std::endl;
+  // }
+  // else {
+  //   std::cout <<"not found" << std::endl;
+  // }
+
+
+  
+  // check if current pos is within bounds of board grid
+  if (r>=board.size() || c>=board[0].size()) {  //board[row] == column
+    return false;
+  }
+
+  // always check if its in the prefix dict
+  if (prefix.find(word) == prefix.end()) {
+    return false;
+  }
+
+
+  word += board[r][c]; // if pos is within bounds, add letter to building word
+
+
+
+  if (boggleHelper(dict, prefix, board, word, result, r+dr,c+dc, dr, dc) == true) {
+    return true;
+  }
+
+   // DICT NEEDS TO GO AFTER BOGGLECALL
+  if (dict.find(word) != dict.end()) {
+    result.insert(word);
+    return true;
+  }
+
+  // boggleHelper(dict, prefix, board, word, result, r+dr,c+dc, dr, dc);
+  // // bool longer = boggleHelper(dict, prefix, board, word, result, r+dr,c+dc, dr, dc);
+
+  // if (dictvalid==true && longer==false) { // if its a valid word in dict, and is not the longest version of the prefix,
+  //   std::cout <<"Added: " << word << std::endl;
+  //   result.insert(word);
+  // }
+
+  return false;
+   
+  // return false; // not possible prefix, backtrack
+
+
 }
+
+
+
+
+
+
